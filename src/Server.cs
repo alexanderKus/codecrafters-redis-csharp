@@ -11,7 +11,7 @@ HandleConnection(clientSocket);
 
 async Task HandleConnection(Socket socket)
 {
-    while (clientSocket.Connected)
+    while (socket.Connected)
     {
         var buffer = new byte[1024];
         await socket.ReceiveAsync(buffer);
