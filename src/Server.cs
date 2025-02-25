@@ -14,7 +14,7 @@ async Task HandleConnection(Socket socket)
     while (clientSocket.Connected)
     {
         var buffer = new byte[1024];
-        await clientSocket.ReceiveAsync(buffer);
-        await clientSocket.SendAsync("+PONG\r\n"u8.ToArray());
+        await socket.ReceiveAsync(buffer);
+        await socket.SendAsync("+PONG\r\n"u8.ToArray());
     }
 }
