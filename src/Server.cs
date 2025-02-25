@@ -1,8 +1,13 @@
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 
-var server = new TcpListener(IPAddress.Any, 6379);
+TcpListener server = new(IPAddress.Any, 6379);
 server.Start();
-var clientSocket = server.AcceptSocket();
-clientSocket.Send(Encoding.UTF8.GetBytes("+PONG\r\n"), SocketFlags.None);
+
+Socket clientSocket = server.AcceptSocket();
+while (clientSocket.Connected)
+{
+    Span<byte> buffer = new byte[1024];
+    clientSocket.Receive(buffer);
+    clientSocket.Send("+PONG\r\n"u8.ToArray());
+}
