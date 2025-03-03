@@ -4,6 +4,8 @@ using System.Text;
 using codecrafters_redis;
 
 TcpListener server = new(IPAddress.Any, 6379);
+RedisParser parser = new();
+RedisEngine engine = new();
 server.Start();
 
 while (true)
@@ -20,9 +22,7 @@ async Task HandleConnection(Socket socket)
     {
         var buffer = new byte[1024];
         await socket.ReceiveAsync(buffer);
-        var parser = new RedisParser();
         var command = parser.Parse(buffer.AsSpan());
-        var engine = new RedisEngine();
         var result = engine.Run(command);
         await socket.SendAsync(Encoding.UTF8.GetBytes(result));
     }
