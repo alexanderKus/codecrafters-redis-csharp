@@ -23,7 +23,7 @@ async Task HandleConnection(Socket socket)
         var parser = new RedisParser();
         var command = parser.Parse(buffer.AsSpan());
         var engine = new RedisEngine();
-        var result = engine.Run(command.First());
+        var result = engine.Run(command);
         await socket.SendAsync(Encoding.UTF8.GetBytes(result));
     }
 }
