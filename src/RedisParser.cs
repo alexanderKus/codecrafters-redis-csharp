@@ -23,8 +23,12 @@ public class RedisParser
             index += len;
         }
 
-        if (strings.Count != 2) throw new Exception("Too much commands");
-        return ParseCommand(strings[0], strings[1]);
+        return strings.Count switch
+        {
+            1 => ParseCommand(strings[0]),
+            2 => ParseCommand(strings[0], strings[1]),
+            _ => throw new Exception("Too much commands"),
+        };
     }
 
     private (string, int) ParseBulkString(ReadOnlySpan<byte> buffer)
@@ -40,9 +44,10 @@ public class RedisParser
         return (Encoding.UTF8.GetString(buffer[index..(index+len)]), index+len+2);
     }
     
-    private RedisCommand ParseCommand(ReadOnlySpan<char> commandName, string args) 
+    private RedisCommand ParseCommand(ReadOnlySpan<char> commandName, string args="") 
         => commandName switch
     {
+        "PING" => new PongCommand(),
         "ECHO" => new EchoCommand(args),
         _ => throw new Exception($"Unsupported command {commandName}")
     };
