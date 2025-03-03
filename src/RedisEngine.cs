@@ -8,7 +8,7 @@ public sealed record RedisEngine
     {
         switch (command)
         {
-            case EchoCommand echoCommand: return echoCommand.Args;
+            case EchoCommand echoCommand: return $"${echoCommand.Args.Length}\r\n{echoCommand.Args}\r\n";
             default: throw new Exception($"Does not know how to run command: {command}");
         }
     }
