@@ -45,7 +45,33 @@ public class RedisParser
         "PING" => new PongCommand(),
         "ECHO" => new EchoCommand(data[1]),
         "GET"  => new GetCommand(data[1]),
-        "SET"  => new SetCommand(data[1], data[2]),
+        "SET"  => ParseSerCommand(data),
         _ => throw new Exception($"Unsupported command ")
     };
+
+    private RedisCommand ParseSerCommand(List<string> data)
+    {
+        if (data.Count == 3)
+            return new SetCommand(data[1], data[2]);
+        if (data.Count == 5)
+        {
+            var commandCommand = data[3].ToUpper();
+            switch (commandCommand)
+            {
+                case "PX":
+                {
+                    var ms = int.Parse(data[4]);
+                    return new SetCommand(data[1], data[2], TimeSpan.FromMilliseconds(ms));
+                }
+                case "EX":
+                {
+                    var s = int.Parse(data[4]);
+                    return new SetCommand(data[1], data[2], TimeSpan.FromSeconds(s));
+                }
+            }
+        }
+
+        Console.WriteLine("Unsupported SetCommand Type");
+        throw new Exception("Unsupported SetCommand Type");
+    }
 }
