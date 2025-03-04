@@ -31,7 +31,9 @@ public sealed record RedisEngine
     {
         if (_dict.TryGetValue(key, out var value))
         {
-            if (value.ExpireDate is not null && value.ExpireDate >= DateTimeOffset.UtcNow)
+            if (value.ExpireDate is null) 
+                return $"${value.Value.Length}\r\n{value.Value}\r\n";
+            if (value.ExpireDate >= DateTimeOffset.UtcNow)
                 return $"${value.Value.Length}\r\n{value.Value}\r\n";
             _dict.Remove(key);
         }
